@@ -61,8 +61,10 @@ npm run dev                        # or: bun run dev
 
 ## OAuth (production)
 
+**Keep secrets only in `backend/.env`** (never commit real values to the repo). Use `backend/.env.example` as a template.
+
 - **Google**: Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env`. Add redirect URI `http://localhost:8000/api/auth/callback` (or your `BACKEND_ORIGIN` + `/api/auth/callback`) in Google Cloud Console.
-- **LinkedIn**: Set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`; add the same redirect URI in LinkedIn Developer Portal.
+- **LinkedIn**: Set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` in `backend/.env`; add the same redirect URI in LinkedIn Developer Portal.
 
 ## Docker
 
@@ -88,5 +90,3 @@ PostgreSQL data is stored in a Docker volume `postgres_data`.
 - **`frontend/`** — Next.js 14 + Mantine 7; user panel (dashboard, applications) and admin panel (settings, users). Points at the API via `NEXT_PUBLIC_API_URL` (e.g. `http://localhost:8000`).
 
 You can develop or deploy each part separately: run only the backend for API access, or only the frontend (with an existing API URL).
-
-
