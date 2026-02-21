@@ -9,12 +9,14 @@ module.exports = {
   },
   webpack: (config) => {
     const srcDir = path.join(__dirname, "src");
+    const libDir = path.join(__dirname, "src", "lib");
     config.resolve.alias = {
       ...config.resolve.alias,
       "@": srcDir,
+      "lib/api": path.join(libDir, "api"),
+      "lib/auth": path.join(libDir, "auth"),
+      lib: libDir,
     };
-    // Resolve from src so "lib/api" and "lib/auth" work from any file (fixes Vercel)
-    config.resolve.modules = [srcDir, "node_modules", ...(config.resolve.modules || [])];
     return config;
   },
 };
