@@ -2,8 +2,8 @@
 
 import { Button, Card, Stack, Switch, TextInput } from "@mantine/core";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getApiUrl } from "lib/api";
-import { getAuthHeaders } from "lib/auth";
+import { getApiUrl } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/auth";
 import { PageContainer } from "@/components/PageContainer/PageContainer";
 import { useState, useEffect } from "react";
 

@@ -8,14 +8,12 @@ module.exports = {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
   webpack: (config) => {
-    const srcDir = path.join(__dirname, "src");
-    const libDir = path.join(__dirname, "src", "lib");
+    const src = path.join(__dirname, "src");
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@": srcDir,
-      "lib/api": path.join(libDir, "api"),
-      "lib/auth": path.join(libDir, "auth"),
-      lib: libDir,
+      "@": src,
+      "lib/auth": path.join(src, "lib", "auth"),
+      "lib/api": path.join(src, "lib", "api"),
     };
     return config;
   },

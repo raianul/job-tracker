@@ -29,7 +29,7 @@
     "push-release": "git push --follow-tags origin main",
     "pull": "git rebase origin main -i",
     "pre-commit": "bun run lint",
-    "prepare": "node -e \"try { require('fs').accessSync('.git'); require('child_process').execSync('husky install', { stdio: 'inherit' }) } catch (e) {}\"",
+    "prepare": "husky install",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
