@@ -7,8 +7,11 @@ module.exports = {
   experimental: {
     optimizePackageImports: ["@mantine/core", "@mantine/hooks"],
   },
-  webpack: (config, { isServer }) => {
-    config.resolve.alias["@"] = path.resolve(__dirname, "src");
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@": path.join(__dirname, "src"),
+    };
     return config;
   },
 };
