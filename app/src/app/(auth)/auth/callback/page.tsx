@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Center, Loader, Text } from "@mantine/core";
-import { setStoredToken } from "@/lib/auth";
+import { setStoredToken } from "../../../../lib/auth";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthCallbackPage() {

@@ -4,8 +4,8 @@ import { Anchor, Badge, Box, Button, Group, Select, Table, TextInput } from "@ma
 import { IconExternalLink } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { getApiUrl } from "@/lib/api";
-import { getAuthHeaders } from "@/lib/auth";
+import { getApiUrl } from "../../../lib/api";
+import { getAuthHeaders } from "../../../lib/auth";
 import { PageContainer } from "@/components/PageContainer/PageContainer";
 import { useState } from "react";
 
