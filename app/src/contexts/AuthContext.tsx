@@ -1,9 +1,9 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { getStoredToken, setStoredToken } from "../lib/auth";
-import { getApiUrl } from "../lib/api";
-import type { User } from "../lib/auth";
+import { getStoredToken, setStoredToken } from "lib/auth";
+import { getApiUrl } from "lib/api";
+import type { User } from "lib/auth";
 
 interface AuthState {
   token: string | null;

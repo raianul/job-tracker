@@ -1,8 +1,8 @@
 "use client";
 
 import { Button, Card, Stack, Text } from "@mantine/core";
-import { getApiUrl } from "../../lib/api";
-import { setStoredToken } from "../../lib/auth";
+import { getApiUrl } from "lib/api";
+import { setStoredToken } from "lib/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -5,8 +5,8 @@ import { DateInput } from "@mantine/dates";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { getApiUrl } from "../../../../lib/api";
-import { getAuthHeaders } from "../../../../lib/auth";
+import { getApiUrl } from "lib/api";
+import { getAuthHeaders } from "lib/auth";
 import { PageContainer } from "@/components/PageContainer/PageContainer";
 
 export default function NewApplicationPage() {
