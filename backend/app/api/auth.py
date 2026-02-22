@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from authlib.integrations.httpx_client import AsyncOAuth2Client
@@ -15,7 +15,16 @@ from app.schemas.user import TokenResponse, UserResponse
 from app.services.auth import get_or_create_user, user_to_response
 from pydantic import BaseModel
 
+settings = get_settings()
 router = APIRouter(prefix="/api/auth", tags=["auth"])
+
+# OAuth provider endpoints
+GOOGLE_AUTHORIZE = "https://accounts.google.com/o/oauth2/v2/auth"
+GOOGLE_TOKEN = "https://oauth2.googleapis.com/token"
+GOOGLE_USERINFO = "https://www.googleapis.com/oauth2/v2/userinfo"
+LINKEDIN_AUTHORIZE = "https://www.linkedin.com/oauth/v2/authorization"
+LINKEDIN_TOKEN = "https://www.linkedin.com/oauth/v2/accessToken"
+LINKEDIN_USERINFO = "https://api.linkedin.com/v2/userinfo"
 
 
 class DevLoginBody(BaseModel):
@@ -40,14 +49,6 @@ def dev_login(
     )
     access_token = create_access_token(data={"sub": str(user.id)})
     return TokenResponse(access_token=access_token, user=user_to_response(user))
-settings = get_settings()
-
-GOOGLE_AUTHORIZE = "https://accounts.google.com/o/oauth2/v2/auth"
-GOOGLE_TOKEN = "https://oauth2.googleapis.com/token"
-GOOGLE_USERINFO = "https://www.googleapis.com/oauth2/v2/userinfo"
-LINKEDIN_AUTHORIZE = "https://www.linkedin.com/oauth/v2/authorization"
-LINKEDIN_TOKEN = "https://www.linkedin.com/oauth/v2/accessToken"
-LINKEDIN_USERINFO = "https://api.linkedin.com/v2/userinfo"
 
 
 @router.get("/me", response_model=UserResponse)
@@ -158,7 +159,6 @@ async def auth_callback(
             )
             token_resp.raise_for_status()
             token = token_resp.json()
-        async with AsyncClient() as http:
             r = await http.get(
                 LINKEDIN_USERINFO,
                 headers={"Authorization": f"Bearer {token['access_token']}"},

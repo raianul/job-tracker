@@ -2,7 +2,6 @@ import {
   IconBriefcase,
   IconDashboard,
   IconSettings,
-  IconUserCircle,
 } from "@tabler/icons-react";
 import type { NavItem } from "@/types/nav-item";
 

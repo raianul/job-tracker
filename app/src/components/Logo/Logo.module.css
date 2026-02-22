@@ -2,8 +2,3 @@
 	color: lightdark(var(--matine-colors-gray-9), var(--matine-colors-white));
 	text-decoration: none;
 }
-
-
-.subheading {
-	color: lightdark(var(--matine-colors-gray-7), var(--matine-colors-white));
-}

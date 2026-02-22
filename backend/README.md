@@ -28,6 +28,17 @@ If `ADMIN_EMAILS` is set in `.env` (e.g. `ADMIN_EMAILS=dev@example.com`), you ca
 - **Google**: Create credentials at Google Cloud Console, set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. Add redirect URI `http://localhost:8000/api/auth/callback` (or your `BACKEND_ORIGIN` + `/api/auth/callback`).
 - **LinkedIn**: Create an app at LinkedIn Developer Portal, set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`. Add redirect URI same as above.
 
+## Tests
+
+```bash
+cd backend
+source .venv/bin/activate
+pip install -r requirements.txt   # includes pytest
+pytest
+```
+
+Six unit tests cover the root and health endpoints, auth/me (401 without token), OPTIONS preflight, and JWT create/decode.
+
 ## API docs
 
 - Swagger: http://localhost:8000/docs

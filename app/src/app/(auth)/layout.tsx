@@ -1,4 +1,4 @@
-import { Anchor, Box, Text, Title } from "@mantine/core";
+import { Box, Text, Title } from "@mantine/core";
 import classes from "./layout.module.css";
 
 interface Props {

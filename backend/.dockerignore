@@ -9,3 +9,8 @@ htmlcov
 .env
 .env.*
 !.env.example
+.git
+.mypy_cache
+.ruff_cache
+*.md
+README.md

@@ -1,27 +1,40 @@
 # Job Tracker
 
-Central panel to track job applications from multiple sites. **Backend** (FastAPI) and **frontend** (Next.js + Mantine) are in separate folders and can be run or deployed independently.
+Central panel to track job applications from multiple sites. **Backend** (FastAPI) and **frontend** (Next.js + Mantine) live in separate folders and can be run or deployed independently.
+
+---
+
+## Demo
+
+**[Try the live app →](https://job-tracker-orcin-iota-85.vercel.app/)**
+
+---
 
 ## Run locally
 
-You need **PostgreSQL** running, then the **backend**, then the **frontend** (in two terminals).
+You need **PostgreSQL** running, then the **backend**, then the **frontend** (two terminals).
 
 ### 1. Start PostgreSQL
 
-- **Option A — installed on your machine:** start the Postgres service and create a database:
-  ```bash
-  createdb jobtracker
-  ```
-  Default URL: `postgresql://postgres:postgres@localhost:5432/jobtracker` (adjust user/password if different).
+**Option A — local Postgres**
 
-- **Option B — run only Postgres in Docker:**
-  ```bash
-  docker run -d --name jobtracker-db -p 5432:5432 \
-    -e POSTGRES_USER=postgres \
-    -e POSTGRES_PASSWORD=postgres \
-    -e POSTGRES_DB=jobtracker \
-    postgres:16-alpine
-  ```
+Create the database (adjust user/password if needed):
+
+```bash
+createdb jobtracker
+```
+
+Default URL: `postgresql://postgres:postgres@localhost:5432/jobtracker`.
+
+**Option B — Docker (Postgres only)**
+
+```bash
+docker run -d --name jobtracker-db -p 5432:5432 \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=jobtracker \
+  postgres:16-alpine
+```
 
 ### 2. Backend (terminal 1)
 
@@ -31,7 +44,7 @@ python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env
-# Edit .env if needed: DATABASE_URL (default above), JWT_SECRET, ADMIN_EMAILS for dev login
+# Edit .env if needed: DATABASE_URL, JWT_SECRET, ADMIN_EMAILS (for dev login)
 alembic upgrade head
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
@@ -42,51 +55,56 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ### 3. Frontend (terminal 2)
 
 ```bash
-cd frontend
-npm install                        # or: bun install
-cp .env.local.example .env.local   # NEXT_PUBLIC_API_URL=http://localhost:8000
-npm run dev                        # or: bun run dev
+cd app
+npm install
+cp .env.local.example .env.local    # set NEXT_PUBLIC_API_URL=http://localhost:8000
+npm run dev
 ```
 
 - App: http://localhost:3000  
 
 ### 4. Use the app
 
-- Open http://localhost:3000 — you are redirected to `/dashboard` or `/login`.
-- **Dev login**: Set `ADMIN_EMAILS=your@email.com` in `backend/.env`, then use **Dev login (no OAuth)** on the login page.
-- **Dashboard**: Shows your next upcoming interviews; click one to open the application detail.
-- **Applications**: List, filter, search. "Add application" → paste job URL (we fetch title/company) → set applied date.
-- **Application detail**: View/edit status and notes; add interview sessions (name + date).
-- **Admin** (only for users with `is_admin`): Settings (site name, maintenance mode), Users (list, set admin/active).
+- Open http://localhost:3000 — you’re redirected to `/dashboard` or `/login`.
+- **Dev login:** Set `ADMIN_EMAILS=your@email.com` in `backend/.env`, then use **Dev login (no OAuth)** on the login page.
+- **Dashboard:** Upcoming interviews; click one to open the application.
+- **Applications:** List, filter, search; **Add application** → paste job URL (title/company fetched) → set applied date.
+- **Application detail:** View/edit status and notes; add interview sessions (name + date).
+- **Admin** (users with `is_admin`): Settings (site name, maintenance), Users (list, set admin/active).
+
+---
 
 ## OAuth (production)
 
-**Keep secrets only in `backend/.env`** (never commit real values to the repo). Use `backend/.env.example` as a template.
+Keep secrets only in `backend/.env` (never commit real values). Use `backend/.env.example` as a template.
 
-- **Google**: Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `backend/.env`. Add redirect URI `http://localhost:8000/api/auth/callback` (or your `BACKEND_ORIGIN` + `/api/auth/callback`) in Google Cloud Console.
-- **LinkedIn**: Set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET` in `backend/.env`; add the same redirect URI in LinkedIn Developer Portal.
+- **Google:** Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. In Google Cloud Console add redirect URI: `http://localhost:8000/api/auth/callback` (or `BACKEND_ORIGIN` + `/api/auth/callback`).
+- **LinkedIn:** Set `LINKEDIN_CLIENT_ID` and `LINKEDIN_CLIENT_SECRET`. In LinkedIn Developer Portal add the same redirect URI.
+
+---
 
 ## Docker
 
 From the project root:
 
 ```bash
-# Build and run
-docker compose up --build
-
-# Optional: set ADMIN_EMAILS for dev login (and other env in .env or export)
-export ADMIN_EMAILS=dev@example.com
 docker compose up --build
 ```
+
+Optional: set `ADMIN_EMAILS` (and other env) in `.env` or export before running.
 
 - Frontend: http://localhost:3000  
 - Backend API: http://localhost:8000 — Docs: http://localhost:8000/docs  
 
-PostgreSQL data is stored in a Docker volume `postgres_data`.
+PostgreSQL data is stored in the `postgres_data` volume.
+
+---
 
 ## Project layout
 
-- **`backend/`** — FastAPI app, SQLAlchemy, Alembic, auth (JWT + OAuth), applications CRUD, job URL fetch, dashboard, admin. Run on its own with `uvicorn`; no frontend required for API usage.
-- **`frontend/`** — Next.js 14 + Mantine 7; user panel (dashboard, applications) and admin panel (settings, users). Points at the API via `NEXT_PUBLIC_API_URL` (e.g. `http://localhost:8000`).
+| Folder      | Stack              | Description |
+|------------|--------------------|-------------|
+| **`backend/`** | FastAPI, SQLAlchemy, Alembic | API: auth (JWT + Google/LinkedIn OAuth), applications CRUD, job URL fetch, dashboard, admin. Run with `uvicorn`. |
+| **`app/`**     | Next.js 14, Mantine 7 | Web app: dashboard, applications, application detail, admin (settings, users). Uses `NEXT_PUBLIC_API_URL` for the API. |
 
-You can develop or deploy each part separately: run only the backend for API access, or only the frontend (with an existing API URL).
+Backend and frontend can be developed or deployed separately.
