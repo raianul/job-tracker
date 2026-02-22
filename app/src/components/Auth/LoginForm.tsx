@@ -53,14 +53,16 @@ export function LoginForm() {
         >
           Continue with LinkedIn
         </Button>
-        <Button
-          variant="subtle"
-          fullWidth
-          onClick={handleDevLogin}
-          loading={devLoading}
-        >
-          Dev login (no OAuth)
-        </Button>
+        {process.env.NEXT_PUBLIC_DEV_LOGIN_ENABLED === "true" && (
+          <Button
+            variant="subtle"
+            fullWidth
+            onClick={handleDevLogin}
+            loading={devLoading}
+          >
+            Dev login (no OAuth)
+          </Button>
+        )}
       </Stack>
     </Card>
   );
