@@ -56,7 +56,8 @@ def me(user: Annotated[User, Depends(get_current_user)]):
 
 
 def _backend_callback_url() -> str:
-    return f"{settings.backend_origin}/api/auth/callback"
+    origin = (settings.backend_origin or "").rstrip("/")
+    return f"{origin}/api/auth/callback"
 
 
 @router.get("/google")
@@ -79,13 +80,15 @@ def google_login():
 
 @router.get("/linkedin")
 def linkedin_login():
-    if not settings.linkedin_client_id:
+    if not settings.linkedin_client_id or not (settings.linkedin_client_secret or "").strip():
         raise HTTPException(status_code=503, detail="LinkedIn login not configured")
     redirect_uri = _backend_callback_url()
+    # LinkedIn token endpoint expects client_secret in POST body, not Basic auth
     client = AsyncOAuth2Client(
         client_id=settings.linkedin_client_id,
         client_secret=settings.linkedin_client_secret,
         redirect_uri=redirect_uri,
+        token_endpoint_auth_method="client_secret_post",
     )
     url, _ = client.create_authorization_url(
         LINKEDIN_AUTHORIZE,
@@ -134,18 +137,27 @@ async def auth_callback(
             provider_id=data.get("id", ""),
         )
     elif state == "linkedin":
-        if not settings.linkedin_client_id:
-            raise HTTPException(status_code=503, detail="LinkedIn login not configured")
-        client = AsyncOAuth2Client(
-            client_id=settings.linkedin_client_id,
-            client_secret=settings.linkedin_client_secret,
-            redirect_uri=redirect_uri,
-        )
-        token = await client.fetch_token(
-            LINKEDIN_TOKEN,
-            code=code,
-            redirect_uri=redirect_uri,
-        )
+        secret = (settings.linkedin_client_secret or "").strip()
+        if not settings.linkedin_client_id or not secret:
+            raise HTTPException(
+                status_code=503,
+                detail="LinkedIn client secret not set. Set LINKEDIN_CLIENT_SECRET on Render Environment.",
+            )
+        # LinkedIn requires client_id and client_secret in POST body; do token exchange explicitly
+        async with AsyncClient() as http:
+            token_resp = await http.post(
+                LINKEDIN_TOKEN,
+                data={
+                    "grant_type": "authorization_code",
+                    "code": code,
+                    "redirect_uri": redirect_uri,
+                    "client_id": settings.linkedin_client_id,
+                    "client_secret": secret,
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            token_resp.raise_for_status()
+            token = token_resp.json()
         async with AsyncClient() as http:
             r = await http.get(
                 LINKEDIN_USERINFO,

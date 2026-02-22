@@ -3,6 +3,7 @@
 	text-decoration: none;
 }
 
+
 .subheading {
 	color: lightdark(var(--matine-colors-gray-7), var(--matine-colors-white));
 }
